@@ -40,15 +40,14 @@ class PTPv2(Packet):
         XByteField("control", 0),
         SignedByteField("logMessageInterval", -3),
 
-        # Sync
-        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_sync),
+        # Sync and PdelayReq field
+        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_sync or pkt.is_pdelay_req),
 
         # FollowUp
         ConditionalField(TimestampField("preciseOriginTimestamp", 0), lambda pkt: pkt.is_followup),
         ConditionalField(XStrFixedLenField("informationTlv", 0, 32), lambda pkt: pkt.is_followup),
 
         # PdelayReq
-        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_pdelay_req),
         ConditionalField(BitField("reserved4", 0, 80), lambda pkt: pkt.is_pdelay_req),
 
         # PdelayResp
